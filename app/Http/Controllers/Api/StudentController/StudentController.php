@@ -5,27 +5,29 @@ namespace App\Http\Controllers\Api;
 use App\Classes\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentRequest;
+use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
-use App\Interfaces\Student\StudentRepositoryInterface;
+use App\Services\StudentService;
 use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
-    private StudentRepositoryInterface $studentRepositoryInterface;
-    public function __construct(StudentRepositoryInterface $studentRepositoryInterface)
+    protected $studentService;
+
+    public function __construct(StudentService $studentService)
     {
-        $this->studentRepositoryInterface = $studentRepositoryInterface;
+        $this->studentService = $studentService;
     }
 
     public function index()
     {
-        $data = $this->studentRepositoryInterface->getAll();
+        $data = $this->studentService->getAllStudents();
         return ApiResponseHelper::sendResponse(StudentResource::collection($data), '', 200);
     }
 
     public function show(string $id)
     {
-        $student = $this->studentRepositoryInterface->getById($id);
+        $student = $this->studentService->getStudentById($id);
         return ApiResponseHelper::sendResponse(new StudentResource($student), '', 200);
     }
 
@@ -35,15 +37,29 @@ class StudentController extends Controller
             'name' => $request->name,
             'age' => $request->age,
         ];
-        DB::beginTransaction();
-        try {
-            $student = $this->studentRepositoryInterface->store($data);
-            DB::commit();
-            return ApiResponseHelper::sendResponse(new StudentResource($student), 'Record create succesful', 201);
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            return ApiResponseHelper::rollback($ex);
-        }
+        $response = $this->studentService->createStudent($data);
+        return $response['success']
+            ? ApiResponseHelper::sendResponse(new StudentResource($response['data']), $response['message'], 201)
+            : ApiResponseHelper::rollback($response['message']);
     }
-    
+
+    public function update(UpdateStudentRequest $request, string $id)
+    {
+        $data = [
+            'name' => $request->name,
+            'age' => $request->age,
+        ];
+        $response = $this->studentService->updateStudent($data, $id);
+        return $response['success']
+            ? ApiResponseHelper::sendResponse(null, $response['message'], 200)
+            : ApiResponseHelper::rollback($response['message']);
+    }
+
+    public function destroy($id)
+    {
+        $response = $this->studentService->deleteStudent($id);
+        return $response['success']
+            ? ApiResponseHelper::sendResponse(null, $response['message'], 200)
+            : ApiResponseHelper::rollback($response['message']);
+    }
 }
