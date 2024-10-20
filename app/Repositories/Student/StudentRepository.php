@@ -7,7 +7,7 @@ use App\Models\Student;
 
 class StudentRepository implements StudentRepositoryInterface
 {
-    public function index()
+    public function getAll()
     {
         return Student::all();
     }

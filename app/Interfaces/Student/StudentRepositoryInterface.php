@@ -4,7 +4,7 @@ namespace App\Interfaces\Student;
 
 interface StudentRepositoryInterface
 {
-    public function index();
+    public function getAll();
     public function getById($id);
 
     public function store(array $data);
