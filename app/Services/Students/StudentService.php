@@ -3,7 +3,10 @@
 namespace App\Services\Students;
 
 use App\Interfaces\Student\StudentRepositoryInterface;
+use App\Models\Student;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log as FacadesLog;
+use Log;
 
 class StudentService
 {
@@ -12,6 +15,17 @@ class StudentService
     public function __construct(StudentRepositoryInterface $studentRepository)
     {
         $this->studentRepository = $studentRepository;
+    }
+    public function findStudentOrFail($id)
+    {
+        $student = Student::find($id);
+        if (!$student) {
+            $message = "No query results for model Student {$id}";
+            // FacadesLog::info($message);
+            throw new \Exception($message);
+        }
+
+        return $student;
     }
 
     public function createStudent(array $data)
@@ -23,7 +37,7 @@ class StudentService
             return ['success' => true, 'data' => $student, 'message' => 'Record created successfully'];
         } catch (\Exception $ex) {
             DB::rollBack();
-            return ['success' => false, 'message' => $ex->getMessage()];
+            return ['success' => false, 'message' => $ex->getMessage(), "e" => $ex];
         }
     }
 
@@ -31,11 +45,14 @@ class StudentService
     {
         DB::beginTransaction();
         try {
-            $this->studentRepository->update($data, $id);
+            $student = $this->findStudentOrFail($id);
+            $updatedStudent = $this->studentRepository->update($student, $data);
             DB::commit();
-            return ['success' => true, 'message' => 'Record updated successfully'];
+          
+            return ['success' => true, "data" => $updatedStudent, 'message' => 'Record updated successfully'];
         } catch (\Exception $ex) {
             DB::rollBack();
+            FacadesLog::info($ex->getMessage());
             return ['success' => false, 'message' => $ex->getMessage()];
         }
     }
@@ -44,6 +61,7 @@ class StudentService
     {
         DB::beginTransaction();
         try {
+            $student = $this->findStudentOrFail($id);
             $this->studentRepository->delete($id);
             DB::commit();
             return ['success' => true, 'message' => 'Record deleted successfully'];

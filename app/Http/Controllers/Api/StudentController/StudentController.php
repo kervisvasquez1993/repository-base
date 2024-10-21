@@ -8,7 +8,7 @@ use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
 use App\Services\Students\StudentService;
-
+use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
@@ -50,16 +50,18 @@ class StudentController extends Controller
             'age' => $request->age,
         ];
         $response = $this->studentService->updateStudent($data, $id);
+        // return $response["message"];
         return $response['success']
-            ? ApiResponseHelper::sendResponse(null, $response['message'], 200)
-            : ApiResponseHelper::rollback($response['message']);
+            ? ApiResponseHelper::sendResponse(new StudentResource($response['data']), $response['message'], 200)
+            : ApiResponseHelper::rollback(null, $response["message"]);
     }
 
     public function destroy($id)
     {
         $response = $this->studentService->deleteStudent($id);
+        
         return $response['success']
             ? ApiResponseHelper::sendResponse(null, $response['message'], 200)
-            : ApiResponseHelper::rollback($response['message']);
+            : ApiResponseHelper::rollback(null, $response['message']);
     }
 }
