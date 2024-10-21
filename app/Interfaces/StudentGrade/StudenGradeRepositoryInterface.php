@@ -9,11 +9,8 @@ interface StudenGradeRepositoryInterface
     public function getAllGrade();
     public function getByGrade($id);
     public function getByStudent($id);
-    public function createGradeStudent(array $data,Student $student);
+    public function createGradeStudent(Student $student, array $data);
 
-    public function updateGradeStudent($id,array $data);
+    public function updateGradeStudent($id, array $data);
     public function destroyGradeStudent($id);
-    
-
-
 }
