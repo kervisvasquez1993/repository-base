@@ -10,17 +10,16 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('student_grade', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('grade_id');
-            $table->timestamps();
-            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
-            $table->foreign('grade_id')->references('id')->on('grades')->onDelete('cascade');
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('student_grade', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('student_id');
+        $table->unsignedBigInteger('grade_id');
+        $table->timestamps(); // Esto ya añade created_at y updated_at
+        $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+        $table->foreign('grade_id')->references('id')->on('grades')->onDelete('cascade');
+    });
+}
 
     /**
      * Reverse the migrations.
