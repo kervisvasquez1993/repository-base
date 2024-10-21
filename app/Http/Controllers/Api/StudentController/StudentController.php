@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\StudentController;
 
-use App\Classes\ApiResponseHelper;
+use App\Class\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
-use App\Services\StudentService;
-use Illuminate\Support\Facades\DB;
+use App\Services\Students\StudentService;
+
 
 class StudentController extends Controller
 {

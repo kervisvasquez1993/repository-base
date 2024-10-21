@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes;
+namespace App\Class;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;

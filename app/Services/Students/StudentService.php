@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Students;
 
 use App\Interfaces\Student\StudentRepositoryInterface;
 use Illuminate\Support\Facades\DB;
