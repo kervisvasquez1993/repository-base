@@ -21,7 +21,6 @@ class StudentService
         $student = Student::find($id);
         if (!$student) {
             $message = "No query results for model Student {$id}";
-            // FacadesLog::info($message);
             throw new \Exception($message);
         }
 
